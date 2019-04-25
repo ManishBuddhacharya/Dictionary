@@ -9,6 +9,10 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -17,14 +21,7 @@ public class MainActivity extends AppCompatActivity {
 
     private Button btnCall;
     private ListView lstView;
-    private Map<String,String> dictionary;
-
-    public static final String values[] = {
-        "Yeta aunus", "Come here",
-                "Uta Janus", "Go there",
-                "Namaste","Hello"
-    };
-
+    private Map<String, String> dictionary;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,9 +31,7 @@ public class MainActivity extends AppCompatActivity {
         lstView = findViewById(R.id.lstItem);
         dictionary = new HashMap<>();
 
-        for (int i = 0; i < values.length; i +=2){
-            dictionary.put(values[i], values[i+1]);
-        }
+        readFromFile();
 
         ArrayAdapter arrayAdapter = new ArrayAdapter<>(
             this,android.R.layout.simple_list_item_1,
@@ -57,5 +52,22 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
+    }
+
+    private void readFromFile(){
+        try {
+            FileInputStream fos = openFileInput("words.txt");
+            InputStreamReader isr = new InputStreamReader(fos);
+            BufferedReader br = new BufferedReader(isr);
+            String line ="";
+
+            while ((line = br.readLine()) != null){
+                String[] parts = line.split("->");
+                dictionary.put(parts[0], parts[1]);
+            }
+        }
+        catch (IOException e){
+            e.printStackTrace();
+        }
     }
 }
